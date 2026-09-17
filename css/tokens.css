@@ -1,0 +1,72 @@
+/* ============================================================================
+   tokens.css — design tokens. Everything visual scales from these.
+   ============================================================================ */
+
+@layer tokens {
+  :root {
+    /* Palette */
+    --bg:            #0a0a0a;
+    --bg-elev:       #111111;
+    --bg-elev-2:     #161616;
+    --fg:            #f5f2ed;
+    --fg-dim:        #a8a29e;
+    --fg-mute:       #6b6560;
+    --line:          rgba(245, 242, 237, 0.08);
+    --line-strong:   rgba(245, 242, 237, 0.18);
+
+    /* Accent */
+    --accent:        #7c5cff;
+    --accent-2:      #a58bff;
+    --accent-glow:   color-mix(in oklab, var(--accent) 40%, transparent);
+    --accent-soft:   color-mix(in oklab, var(--accent) 12%, var(--bg));
+
+    /* Type */
+    --font-display:  "Inter", "Helvetica Neue", Arial, sans-serif;
+    --font-serif:    "Instrument Serif", "Times New Roman", serif;
+    --font-mono:     "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+    /* Fluid type scale (clamp min preferred max) */
+    --step--2: clamp(0.72rem, 0.68rem + 0.20vw, 0.80rem);
+    --step--1: clamp(0.83rem, 0.78rem + 0.28vw, 0.94rem);
+    --step-0:  clamp(0.95rem, 0.88rem + 0.35vw, 1.10rem);
+    --step-1:  clamp(1.10rem, 1.00rem + 0.55vw, 1.35rem);
+    --step-2:  clamp(1.30rem, 1.15rem + 0.80vw, 1.70rem);
+    --step-3:  clamp(1.60rem, 1.35rem + 1.30vw, 2.30rem);
+    --step-4:  clamp(2.10rem, 1.60rem + 2.60vw, 3.50rem);
+    --step-5:  clamp(2.80rem, 1.80rem + 5.20vw, 5.60rem);
+    --step-6:  clamp(3.60rem, 2.00rem + 8.20vw, 8.50rem);
+    --step-7:  clamp(4.80rem, 2.20rem + 12vw,   13rem);
+
+    /* Space */
+    --space-1: 0.25rem;
+    --space-2: 0.5rem;
+    --space-3: 0.75rem;
+    --space-4: 1rem;
+    --space-5: 1.5rem;
+    --space-6: 2rem;
+    --space-7: 3rem;
+    --space-8: 4.5rem;
+    --space-9: 7rem;
+    --space-10: 10rem;
+
+    /* Layout */
+    --max-w:      1440px;
+    --gutter:     clamp(1rem, 4vw, 3rem);
+    --radius:     14px;
+    --radius-sm:  8px;
+
+    /* Motion */
+    --ease-out:      cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-in-out:   cubic-bezier(0.65, 0, 0.35, 1);
+    --ease-expo:     cubic-bezier(0.16, 1, 0.3, 1);
+    --dur-fast:      180ms;
+    --dur-med:       420ms;
+    --dur-slow:      780ms;
+
+    /* Z */
+    --z-grain:      1;
+    --z-cursor:     900;
+    --z-nav:        800;
+    --z-preloader:  1000;
+  }
+}

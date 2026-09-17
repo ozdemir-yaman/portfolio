@@ -1,0 +1,562 @@
+/* ============================================================================
+   sections.css — per-section layout & styling.
+   ============================================================================ */
+
+@layer sections {
+
+  /* ============================================================
+     Hero
+     ============================================================ */
+  .hero {
+    min-height: 100dvh;
+    padding-block: 0;
+    padding-inline: var(--gutter);
+    max-width: none;
+    margin: 0;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding-top: clamp(6rem, 12vh, 10rem);
+    padding-bottom: clamp(2rem, 6vh, 4rem);
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .hero__canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -2;
+    opacity: 0.85;
+  }
+  .hero__grid {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-image:
+      linear-gradient(to right, var(--line) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--line) 1px, transparent 1px);
+    background-size: 80px 80px;
+    mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
+    opacity: 0.4;
+    pointer-events: none;
+  }
+  .hero__inner {
+    max-width: var(--max-w);
+    margin-inline: auto;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(2rem, 6vh, 5rem);
+    flex: 1;
+    justify-content: center;
+  }
+  .hero__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    align-items: center;
+    color: var(--fg-dim);
+  }
+  .hero__meta-item { display: inline-flex; align-items: center; }
+
+  /* ------------------------------------------------------------
+     Hero headline (Option C: shared left rail)
+     A vertical accent line runs down the left edge, tying the
+     italic name → horizontal beat → giant scrambled title into
+     one visual block. No greeting text — the composition speaks.
+     ------------------------------------------------------------ */
+  .hero__headline {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(0.9rem, 2.2vh, 1.6rem);
+    padding-left: clamp(1.25rem, 2.5vw, 2rem);
+  }
+  /* The left rail. Uses a pseudo-element so the animated growth of the
+     rail itself doesn't shift any content next to it. */
+  .hero__headline::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.35em;      /* align with cap height of the name */
+    bottom: 0.15em;   /* align with baseline of "Developer." */
+    width: 2px;
+    background: linear-gradient(
+      to bottom,
+      color-mix(in oklab, var(--accent) 90%, transparent) 0%,
+      color-mix(in oklab, var(--accent) 55%, transparent) 60%,
+      transparent 100%
+    );
+    transform-origin: top;
+    transform: scaleY(0);
+    animation: heroRailGrow 900ms var(--ease-expo) 120ms forwards;
+  }
+  @keyframes heroRailGrow {
+    to { transform: scaleY(1); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hero__headline::before { transform: scaleY(1); animation: none; }
+  }
+
+  /* Name — medium serif italic that echoes the italic middle title line. */
+  .hero__name-wrap {
+    margin: 0;
+    color: var(--fg);
+  }
+  .hero__name {
+    display: inline-flex;
+    flex-wrap: wrap;
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-weight: 400;
+    font-size: clamp(1.6rem, 2.4vw, 2.6rem);
+    letter-spacing: -0.015em;
+    line-height: 1.05;
+    padding-bottom: 0.15em; /* room for descenders (ö, etc.) */
+    overflow: hidden;
+    color: var(--fg);
+  }
+  .hero__name-char {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(0.9em) rotate(6deg);
+    transition:
+      opacity 620ms var(--ease-out),
+      transform 780ms var(--ease-expo);
+    will-change: opacity, transform;
+  }
+  .hero__name-char.is-in {
+    opacity: 1;
+    transform: translateY(0) rotate(0);
+  }
+  .hero__name-char--space { transform: none; }
+  @media (prefers-reduced-motion: reduce) {
+    .hero__name-char {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+  }
+
+  /* Horizontal beat between name and giant title. */
+  .hero__rule {
+    display: block;
+    width: 3.2rem;
+    height: 1px;
+    background: var(--line-strong);
+    transform: scaleX(0);
+    transform-origin: left;
+    animation: heroRuleGrow 700ms var(--ease-expo) 520ms forwards;
+  }
+  @keyframes heroRuleGrow {
+    to { transform: scaleX(1); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hero__rule { transform: scaleX(1); animation: none; }
+  }
+
+  .hero__title {
+    font-size: var(--step-7);
+    line-height: 0.9;
+    letter-spacing: -0.05em;
+    font-weight: 900;
+  }
+  .hero__title-line {
+    display: block;
+    color: var(--fg);
+  }
+  .hero__title-line--italic {
+    font-family: var(--font-serif);
+    font-weight: 400;
+    font-style: italic;
+    color: var(--accent);
+    letter-spacing: -0.03em;
+    padding-left: clamp(0.6rem, 5vw, 3.5rem);
+  }
+
+  .hero__foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 2rem;
+  }
+  .hero__tagline {
+    max-width: 32ch;
+    font-size: var(--step-1);
+    color: var(--fg-dim);
+    line-height: 1.4;
+  }
+  .hero__ctas { display: flex; gap: 1rem; flex-wrap: wrap; }
+
+  .hero__scroll {
+    position: absolute;
+    bottom: 1.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+    color: var(--fg-dim);
+  }
+  .hero__scroll-line {
+    width: 1px; height: 40px;
+    background: linear-gradient(to bottom, var(--fg-dim), transparent);
+    animation: scrollHint 2s ease-in-out infinite;
+  }
+  @keyframes scrollHint {
+    0%, 100% { transform: scaleY(1); transform-origin: top; }
+    50%      { transform: scaleY(0.3); transform-origin: top; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hero__scroll-line { animation: none; }
+  }
+
+  /* ============================================================
+     About
+     ============================================================ */
+  .about__grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: clamp(2rem, 6vw, 5rem);
+    align-items: start;
+  }
+  @media (max-width: 900px) {
+    .about__grid { grid-template-columns: 1fr; }
+  }
+  .about__bio {
+    display: flex; flex-direction: column; gap: 1.5rem;
+    font-size: var(--step-2);
+    line-height: 1.4;
+    color: var(--fg);
+    max-width: 30ch;
+    letter-spacing: -0.01em;
+  }
+  .about__bio p:not(:first-child) { color: var(--fg-dim); font-size: var(--step-1); }
+
+  .about__stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem 2rem;
+  }
+  .stat {
+    display: flex; flex-direction: column; gap: 0.4rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--line);
+  }
+  .stat__value {
+    font-size: var(--step-5);
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    color: var(--fg);
+  }
+  .stat__value .suffix { color: var(--accent); }
+  .stat__label {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--fg-dim);
+  }
+
+  /* ============================================================
+     Work
+     ============================================================ */
+  .work__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+  @media (max-width: 900px) {
+    .work__grid { grid-template-columns: 1fr; }
+  }
+  .project {
+    position: relative;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    background: var(--bg-elev);
+    overflow: hidden;
+    isolation: isolate;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    min-height: 340px;
+    transition: border-color var(--dur-med) var(--ease-out), transform var(--dur-med) var(--ease-out);
+  }
+  .project:hover { border-color: var(--line-strong); }
+  .project::before {
+    content: "";
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(circle at var(--mx, 50%) var(--my, 50%), color-mix(in oklab, var(--accent) 30%, transparent) 0%, transparent 50%);
+    opacity: 0;
+    transition: opacity var(--dur-med) var(--ease-out);
+    z-index: -1;
+    pointer-events: none;
+  }
+  .project:hover::before { opacity: 1; }
+
+  .project__thumb {
+    aspect-ratio: 16 / 10;
+    background:
+      linear-gradient(135deg, color-mix(in oklab, var(--accent) 40%, var(--bg-elev-2)) 0%, var(--bg-elev-2) 60%),
+      var(--bg-elev-2);
+    border-radius: var(--radius-sm);
+    position: relative;
+    overflow: hidden;
+    filter: blur(0);
+    transition: filter var(--dur-med) var(--ease-out);
+  }
+  .project__thumb::after {
+    content: "";
+    position: absolute; inset: 0;
+    background-image:
+      repeating-linear-gradient(45deg, transparent 0 12px, rgba(255,255,255,0.02) 12px 13px);
+  }
+  .project__thumb-glyph {
+    position: absolute; inset: 0;
+    display: grid; place-items: center;
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: clamp(3rem, 6vw, 5rem);
+    color: color-mix(in oklab, var(--fg) 40%, transparent);
+  }
+  .project__body {
+    display: flex; flex-direction: column; gap: 0.8rem;
+    margin-top: auto;
+  }
+  .project__meta {
+    display: flex; justify-content: space-between; align-items: center;
+    color: var(--fg-dim);
+  }
+  .project__tag {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    padding: 0.3rem 0.7rem;
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .project__tag[data-tag="Live"]        { color: #4ade80; border-color: color-mix(in oklab, #4ade80 40%, transparent); }
+  .project__tag[data-tag="Coming Soon"] { color: var(--fg-dim); }
+  .project__title {
+    font-size: var(--step-3);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+  }
+  .project__blurb { color: var(--fg-dim); font-size: var(--step-0); line-height: 1.5; }
+  .project__stack {
+    display: flex; flex-wrap: wrap; gap: 0.4rem;
+    margin-top: 0.4rem;
+  }
+  .project__stack li {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    padding: 0.2rem 0.55rem;
+    border-radius: 999px;
+    background: var(--bg-elev-2);
+    color: var(--fg-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .project__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    align-self: flex-start;
+    margin-top: 0.8rem;
+    padding: 0.5rem 0.9rem;
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--fg);
+    transition: border-color var(--dur-fast) var(--ease-out),
+                color var(--dur-fast) var(--ease-out),
+                background var(--dur-fast) var(--ease-out);
+  }
+  .project__link:hover {
+    color: var(--bg);
+    background: var(--fg);
+    border-color: var(--fg);
+  }
+  .project__link svg { transition: transform var(--dur-fast) var(--ease-out); }
+  .project__link:hover svg { transform: translate(2px, -2px); }
+
+  /* ============================================================
+     Experience — timeline
+     ============================================================ */
+  .timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border-top: 1px solid var(--line);
+  }
+  .timeline__item {
+    display: grid;
+    grid-template-columns: 1fr 3fr 1fr;
+    gap: 2rem;
+    padding: 2.5rem 0;
+    border-bottom: 1px solid var(--line);
+    position: relative;
+    transition: background-color var(--dur-med) var(--ease-out);
+  }
+  .timeline__item:hover {
+    background-color: color-mix(in oklab, var(--accent) 4%, transparent);
+  }
+  @media (max-width: 900px) {
+    .timeline__item { grid-template-columns: 1fr; gap: 1rem; }
+  }
+  .timeline__dates {
+    color: var(--fg-dim);
+  }
+  .timeline__role {
+    font-size: var(--step-3);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    margin-bottom: 0.3rem;
+  }
+  .timeline__company { color: var(--accent); font-family: var(--font-serif); font-style: italic; font-size: var(--step-2); font-weight: 400; }
+  .timeline__bullets {
+    display: flex; flex-direction: column; gap: 0.6rem;
+    margin-top: 1rem;
+    color: var(--fg-dim);
+    line-height: 1.55;
+  }
+  .timeline__bullets li { padding-left: 1.2rem; position: relative; }
+  .timeline__bullets li::before {
+    content: "";
+    position: absolute;
+    left: 0; top: 0.7em;
+    width: 8px; height: 1px;
+    background: var(--accent);
+  }
+  .timeline__stack {
+    display: flex; flex-direction: column; align-items: flex-end; gap: 0.4rem;
+  }
+  .timeline__stack li {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--fg-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  @media (max-width: 900px) {
+    .timeline__stack { flex-direction: row; flex-wrap: wrap; align-items: flex-start; }
+  }
+
+  /* ============================================================
+     Stack — bento (single 5-column row)
+     ============================================================ */
+  .stack__bento {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1rem;
+  }
+  @media (max-width: 1100px) { .stack__bento { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 720px)  { .stack__bento { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 480px)  { .stack__bento { grid-template-columns: 1fr; } }
+  .bento {
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 1.25rem;
+    background: var(--bg-elev);
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+    min-height: 180px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color var(--dur-med) var(--ease-out), transform var(--dur-med) var(--ease-out);
+  }
+  .bento:hover { border-color: var(--line-strong); }
+  /* .bento--wide no longer used — kept as a no-op for safety if data adds it */
+  .bento--wide { grid-column: auto; }
+  .bento__label {
+    color: var(--fg-dim);
+  }
+  .bento__items {
+    display: flex; flex-wrap: wrap; gap: 0.4rem;
+    margin-top: auto;
+  }
+  .bento__items li {
+    padding: 0.4rem 0.75rem;
+    background: var(--bg-elev-2);
+    border-radius: 999px;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--fg);
+    letter-spacing: 0.02em;
+    transition: background var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+  }
+  .bento__items li:hover {
+    background: var(--accent);
+    color: var(--bg);
+  }
+
+  /* ============================================================
+     Contact
+     ============================================================ */
+  .contact { text-align: center; }
+  .contact .section__head { align-items: center; text-align: center; }
+  .contact__title {
+    font-size: var(--step-7);
+    font-weight: 900;
+    letter-spacing: -0.05em;
+    line-height: 0.9;
+    margin-bottom: clamp(2rem, 6vw, 4rem);
+  }
+  .contact__title span { display: block; }
+  .contact__title em { color: var(--accent); }
+  /* Reserve room for italic descenders (e.g. the "g" in "something good.") —
+     [data-split] uses overflow:hidden to mask the reveal, which would clip them. */
+  .contact__title [data-split] { padding-bottom: 0.18em; }
+  .contact__actions {
+    display: flex; flex-direction: column; align-items: center; gap: 2rem;
+  }
+  .contact__socials {
+    display: flex; gap: 2rem; flex-wrap: wrap; justify-content: center;
+    margin-top: 1rem;
+  }
+  .contact__socials a {
+    color: var(--fg-dim);
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid transparent;
+    transition: color var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out);
+  }
+  .contact__socials a:hover { color: var(--fg); border-bottom-color: var(--accent); }
+
+  /* ============================================================
+     Footer
+     ============================================================ */
+  .footer {
+    padding: 2rem var(--gutter);
+    border-top: 1px solid var(--line);
+    max-width: var(--max-w);
+    margin-inline: auto;
+  }
+  .footer__row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    color: var(--fg-dim);
+  }
+  .footer__row .mono { font-size: 0.75rem; }
+}

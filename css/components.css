@@ -1,0 +1,313 @@
+/* ============================================================================
+   components.css — reusable UI: nav, cursor, buttons, cards, preloader.
+   ============================================================================ */
+
+@layer components {
+
+  /* ============================================================
+     Preloader
+     ============================================================ */
+  .preloader {
+    position: fixed; inset: 0;
+    z-index: var(--z-preloader);
+    background: var(--bg);
+    display: grid;
+    place-items: center;
+    isolation: isolate;
+  }
+  .preloader.is-done { pointer-events: none; }
+  .preloader__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    min-width: min(80vw, 420px);
+  }
+  .preloader__label { color: var(--fg-dim); }
+  .preloader__count {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(4rem, 14vw, 9rem);
+    letter-spacing: -0.05em;
+    line-height: 1;
+    color: var(--fg);
+    font-variant-numeric: tabular-nums;
+  }
+  .preloader__bar {
+    width: 100%;
+    height: 2px;
+    background: var(--line);
+    overflow: hidden;
+    border-radius: 999px;
+  }
+  .preloader__bar > span {
+    display: block;
+    height: 100%;
+    width: 0%;
+    background: var(--accent);
+    transition: width 260ms var(--ease-out);
+  }
+  .preloader__curtain {
+    position: absolute; inset: 0;
+    background: var(--bg);
+    transform: translateY(0);
+    transform-origin: top;
+    z-index: 2;
+    pointer-events: none;
+  }
+  .preloader.is-done .preloader__curtain {
+    animation: curtainUp 1200ms var(--ease-expo) forwards;
+  }
+  @keyframes curtainUp {
+    to { transform: translateY(-100%); }
+  }
+
+  /* ============================================================
+     Cursor
+     ============================================================ */
+  .cursor {
+    position: fixed;
+    top: 0; left: 0;
+    width: 0; height: 0;
+    pointer-events: none;
+    z-index: var(--z-cursor);
+    /* mix-blend-mode: difference forces a full-viewport recomposite on every
+       cursor move. The custom cursor already contrasts against the dark bg. */
+  }
+  .cursor__dot,
+  .cursor__ring {
+    position: absolute;
+    top: 0; left: 0;
+    border-radius: 999px;
+    transform: translate(-50%, -50%);
+    will-change: transform, width, height;
+  }
+  .cursor__dot {
+    width: 6px; height: 6px;
+    background: var(--fg);
+    transition: width 240ms var(--ease-out), height 240ms var(--ease-out), background 240ms var(--ease-out);
+  }
+  .cursor__ring {
+    width: 34px; height: 34px;
+    border: 1px solid var(--fg);
+    transition: width 340ms var(--ease-out), height 340ms var(--ease-out), border-color 240ms var(--ease-out), background 240ms var(--ease-out);
+  }
+  .cursor__label {
+    position: absolute;
+    top: 0; left: 0;
+    transform: translate(-50%, -50%);
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--bg);
+    opacity: 0;
+    transition: opacity 200ms var(--ease-out);
+    white-space: nowrap;
+  }
+  .cursor.is-hovering .cursor__ring {
+    width: 64px; height: 64px;
+    background: var(--fg);
+    border-color: transparent;
+  }
+  .cursor.is-hovering .cursor__dot { width: 0; height: 0; }
+  .cursor.is-hovering .cursor__label { opacity: 1; }
+  .cursor.is-clicking .cursor__ring { width: 24px; height: 24px; }
+
+  @media (hover: none), (pointer: coarse), (prefers-reduced-motion: reduce) {
+    .cursor { display: none; }
+  }
+
+  /* ============================================================
+     Nav
+     ============================================================ */
+  .nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: var(--z-nav);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem var(--gutter);
+    /* Use a solid-ish translucent color by default (cheap). Only apply the
+       expensive backdrop-filter once scrolled, and only on devices that can
+       afford it. */
+    background: color-mix(in oklab, var(--bg) 82%, transparent);
+    border-bottom: 1px solid transparent;
+    transition: border-color var(--dur-med) var(--ease-out), background var(--dur-med) var(--ease-out);
+    will-change: background-color;
+  }
+  @media (min-width: 900px) {
+    .nav.is-scrolled {
+      background: color-mix(in oklab, var(--bg) 60%, transparent);
+      backdrop-filter: blur(16px) saturate(160%);
+      -webkit-backdrop-filter: blur(16px) saturate(160%);
+    }
+  }
+  .nav.is-scrolled {
+    border-bottom-color: var(--line);
+  }
+  .nav__brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--fg);
+  }
+  .nav__brand-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 12px var(--accent-glow);
+    animation: pulse 2.4s ease-in-out infinite;
+  }
+  .nav__links {
+    display: flex; gap: 2rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+  @media (max-width: 720px) { .nav__links { display: none; } }
+  .nav__links a {
+    position: relative;
+    color: var(--fg-dim);
+    transition: color var(--dur-fast) var(--ease-out);
+  }
+  .nav__links a::after {
+    content: "";
+    position: absolute; left: 0; right: 0; bottom: -6px;
+    height: 2px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--dur-med) var(--ease-out);
+  }
+  .nav__links a:hover,
+  .nav__links a.is-active { color: var(--fg); }
+  .nav__links a.is-active::after { transform: scaleX(1); }
+
+  .nav__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.65rem 1.1rem;
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: border-color var(--dur-fast) var(--ease-out), background var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+  }
+  .nav__cta:hover { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+
+  /* ============================================================
+     Buttons
+     ============================================================ */
+  .btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 1rem 1.6rem;
+    border-radius: 999px;
+    font-weight: 500;
+    font-size: 0.95rem;
+    letter-spacing: -0.01em;
+    transition: transform var(--dur-fast) var(--ease-out),
+                background var(--dur-med) var(--ease-out),
+                color var(--dur-med) var(--ease-out),
+                border-color var(--dur-med) var(--ease-out);
+    isolation: isolate;
+    overflow: hidden;
+  }
+  .btn::before {
+    content: "";
+    position: absolute; inset: 0;
+    background: var(--accent);
+    transform: translateY(101%);
+    transition: transform 480ms var(--ease-expo);
+    z-index: -1;
+  }
+  .btn:hover::before { transform: translateY(0); }
+  .btn--primary {
+    background: var(--fg);
+    color: var(--bg);
+  }
+  .btn--primary:hover { color: var(--bg); }
+  .btn--ghost {
+    border: 1px solid var(--line-strong);
+    color: var(--fg);
+  }
+  .btn--ghost:hover { color: var(--bg); border-color: var(--accent); }
+
+  .btn--huge {
+    padding: 1.6rem 2.4rem;
+    font-size: clamp(1.1rem, 2vw, 1.6rem);
+    background: var(--fg);
+    color: var(--bg);
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.4rem;
+  }
+  .btn--huge .btn__hint {
+    font-size: 0.7rem;
+    color: color-mix(in oklab, var(--bg) 60%, transparent);
+    transition: color var(--dur-fast) var(--ease-out);
+  }
+  .btn--huge:hover { color: var(--bg); }
+  .btn--huge:hover .btn__hint { color: color-mix(in oklab, var(--bg) 80%, transparent); }
+
+  /* ============================================================
+     Section head
+     ============================================================ */
+  .section__head {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: clamp(2rem, 5vw, 4rem);
+  }
+  .section__index {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    color: var(--fg-dim);
+  }
+  .section__index::before {
+    content: "";
+    width: 32px;
+    height: 1px;
+    background: var(--accent);
+  }
+  .section__title { max-width: 22ch; }
+  .section__note { color: var(--fg-mute); }
+
+  /* Split reveal target */
+  [data-split] { display: inline-block; overflow: hidden; }
+  [data-split] .line { display: block; }
+  [data-split] .line > span { display: inline-block; will-change: transform; }
+  @media (prefers-reduced-motion: reduce) {
+    [data-split] .line > span { transform: none !important; }
+  }
+
+  /* ============================================================
+     Pulse dot
+     ============================================================ */
+  .pulse-dot {
+    display: inline-block;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: #4ade80;
+    box-shadow: 0 0 12px #4ade8080;
+    animation: pulse 2s ease-in-out infinite;
+    margin-right: 0.5rem;
+    vertical-align: middle;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50%      { opacity: 0.5; transform: scale(1.25); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .pulse-dot, .nav__brand-dot { animation: none; }
+  }
+}

@@ -1,0 +1,102 @@
+/* ============================================================================
+   base.css — typography, page primitives, utilities.
+   ============================================================================ */
+
+@layer base {
+  html {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-display);
+    font-size: 16px;
+    /* Native, instant scroll. No smooth-scroll, no snap — feels the most
+       natural and avoids any hijacking-related jank. */
+    scroll-behavior: auto;
+  }
+
+  body {
+    min-height: 100dvh;
+    background:
+      radial-gradient(ellipse at 20% -10%, color-mix(in oklab, var(--accent) 8%, transparent) 0%, transparent 40%),
+      radial-gradient(ellipse at 90% 100%, color-mix(in oklab, var(--accent) 6%, transparent) 0%, transparent 45%),
+      var(--bg);
+    font-size: var(--step-0);
+    overflow-x: hidden;
+  }
+
+  /* Typography */
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 0.95;
+  }
+  h1 { font-size: var(--step-7); }
+  h2 { font-size: var(--step-5); }
+  h3 { font-size: var(--step-3); }
+
+  em { font-family: var(--font-serif); font-style: italic; font-weight: 400; letter-spacing: -0.02em; }
+
+  .mono { font-family: var(--font-mono); font-size: var(--step--1); letter-spacing: 0.02em; text-transform: uppercase; color: var(--fg-dim); }
+
+  /* Skip link */
+  .skip-link {
+    position: fixed;
+    top: -100px; left: 1rem;
+    background: var(--accent); color: var(--bg);
+    padding: 0.6rem 1rem;
+    border-radius: var(--radius-sm);
+    z-index: 9999;
+    font-weight: 600;
+    transition: top var(--dur-fast) var(--ease-out);
+  }
+  .skip-link:focus-visible { top: 1rem; }
+
+  /* Grain overlay — isolated compositor layer, no blend mode (blend modes force
+     full-viewport recompose every scroll frame). */
+  .grain {
+    pointer-events: none;
+    position: fixed; inset: 0;
+    z-index: var(--z-grain);
+    opacity: 0.06;
+    transform: translateZ(0);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.6 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  @media (max-width: 720px) {
+    .grain { display: none; } /* mobile GPUs choke on the overlay */
+  }
+
+  /* Layout utilities */
+  main { display: block; }
+
+  section {
+    padding-block: clamp(4rem, 10vw, 9rem);
+    padding-inline: var(--gutter);
+    max-width: var(--max-w);
+    margin-inline: auto;
+    position: relative;
+  }
+
+  /* Hide default cursor on desktop when custom cursor active */
+  @media (hover: hover) and (pointer: fine) {
+    html.custom-cursor,
+    html.custom-cursor * { cursor: none !important; }
+  }
+
+  /* Reveal utility — used by IntersectionObserver via reveal.js.
+     Note: no permanent will-change (would promote every reveal target to its own
+     GPU layer, exhausting video memory and slowing scroll). */
+  [data-reveal] {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 900ms var(--ease-out), transform 900ms var(--ease-out);
+  }
+  [data-reveal].is-revealing { will-change: opacity, transform; }
+  [data-reveal].is-visible {
+    opacity: 1;
+    transform: none;
+  }
+  [data-reveal].is-settled { will-change: auto; }
+  @media (prefers-reduced-motion: reduce) {
+    [data-reveal] { opacity: 1; transform: none; transition: none; }
+  }
+}
